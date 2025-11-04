@@ -1,0 +1,55 @@
+/* --- ★ ナビゲーションバー (変更なし) --- */
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px;
+    background: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    flex-shrink: 0;
+}
+nav button {
+    padding: 8px 16px;
+    font-size: 1em;
+    font-weight: 500;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background-color: #f0f2f5;
+    color: #555;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+nav button:hover {
+    background-color: #e0e0e0;
+}
+nav button.active {
+    background-color: #007aff;
+    color: white;
+    border-color: #007aff;
+}
+
+/* --- ★ ページコンテンツエリア (変更) --- */
+main#content-area {
+    flex: 1; /* ★ 残りの高さをすべて使う */
+    display: flex; /* ★ 子要素(ページ)を表示 */
+    /* justify-content: center; */ /* ← 中央揃え削除 */
+    /* align-items: center; */     /* ← 中央揃え削除 */
+    /* padding: 16px; */    /* ← パディング削除 */
+    box-sizing: border-box;
+    min-height: 0; /* flexの子要素の縮小対策 */
+    /* overflow-y: auto; */ /* ← ページ側でスクロールするので削除 */
+}
+
+/* --- ★ 各ページコンテナ (変更) --- */
+.page {
+    display: flex; /* ★ App.jsx側で表示/非表示を制御 */
+    width: 100%;   /* ★ 全幅 */
+    height: 100%;  /* ★ 全高 */
+    /* max-width: 600px; */ /* ← 最大幅制限削除 */
+    /* background: #fff; */ /* ← 背景削除 */
+    /* border-radius: 12px; */ /* ← 角丸削除 */
+    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */ /* ← 影削除 */
+    overflow: hidden; /* ★ ページ内のコンテンツがはみ出さないように */
+    flex-direction: column; /* ★ 縦積み (ChatPage以外で必要なら) */
+}

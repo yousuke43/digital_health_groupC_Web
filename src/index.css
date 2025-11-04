@@ -1,0 +1,19 @@
+/* 元の body スタイルをここに適用 */
+body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    background-color: #f0f2f5; 
+    color: #333; 
+    display: flex; /* ★ Reactの #root に合わせるため修正 */
+    flex-direction: column;
+    height: 100vh; 
+    margin: 0; 
+    overflow: hidden;
+}
+
+/* Reactアプリのルート要素 */
+#root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}

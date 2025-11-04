@@ -1,0 +1,121 @@
+/* --- ページ全体のコンテナ --- */
+.health-page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f0f2f5; /* 背景色 */
+    overflow: hidden;
+}
+
+/* ★★★ ヘッダーとナビゲーション ★★★ */
+.health-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+
+.health-header h1 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #111;
+}
+
+.date-navigation {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.date-navigation .date-display {
+    font-size: 1em;
+    font-weight: 600;
+    color: #333;
+    width: 220px; /* 日付表示エリアの幅を固定 */
+    text-align: center;
+}
+
+.date-navigation button {
+    padding: 8px 12px;
+    font-size: 0.9em;
+    font-weight: 500;
+    border: 1px solid #007aff;
+    border-radius: 8px;
+    background-color: #007aff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.date-navigation button:hover {
+    background-color: #0056b3;
+}
+
+.date-navigation button:disabled {
+    background-color: #e0e0e0;
+    border-color: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+/* ★★★ ここまで追加 ★★★ */
+
+
+/* --- 読み込み・エラー表示 --- */
+.loading-message,
+.error-message {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.1em;
+    color: #888;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.error-message {
+    color: #ff3b30;
+}
+
+
+/* --- ★ グラフのグリッドレイアウト --- */
+.chart-grid {
+    flex: 1; /* 残りの高さをすべて使う */
+    overflow-y: auto; /* グリッド全体をスクロール */
+    padding: 20px;
+    display: grid;
+    /* 2列に分割 (1fr = 利用可能なスペースを均等に) */
+    grid-template-columns: 1fr 1fr;
+    gap: 20px; /* グラフ間の隙間 */
+}
+
+/* --- 各グラフのウィジェット (カード) --- */
+.chart-widget {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    /* グラフの最小の高さを設定 (レイアウト崩れ防止) */
+    min-height: 350px; 
+}
+
+.chart-widget h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+/* --- グラフ描画エリア --- */
+.chart-content {
+    flex: 1; /* ウィジェット内の残りの高さをすべて使う */
+    position: relative; /* Chart.js が高さを認識するために必要 */
+    min-height: 300px; /* グラフの最小高さを確保 */
+}

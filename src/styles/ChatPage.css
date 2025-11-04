@@ -1,0 +1,210 @@
+/* --- ★ ChatPage 全体のレイアウト --- */
+#chat-page {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 16px;
+    gap: 24px; /* コンポーネント間の間隔を広げる */
+    background-color: #f5f5f5;
+    justify-content: center; /* 中央寄せ */
+    align-items: center; /* 縦方向も中央寄せ */
+}
+
+/* --- ★ 左側：チャットエリア --- */
+.chat-interface-area {
+    display: flex;
+    flex-direction: column;
+    width: 45%; /* VRMビューアーのスペースを確保するために少し縮小 */
+    min-width: 400px;
+    height: 80%;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+
+/* --- ★ 右側：VRM表示エリア --- */
+#vrm-canvas-container {
+    width: 50%;
+    min-width: 600px; /* 最小幅を設定 */
+    height: 500px;
+    background-color: #f0f2f5;
+    position: relative;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#vrm-canvas {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover; /* 領域いっぱいに表示 */
+    transform: scale(1.2); /* キャラクターを少し大きく表示 */
+}
+
+/* --- チャットエリア内の要素スタイル --- */
+.header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #eaeaea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+}
+.header h1 { margin: 0; font-size: 1.4em; color: #111; flex: 1; }
+
+/* ★★★ ボタンのスタイルを再確認 ★★★ */
+#connectButton {
+    padding: 8px 12px; border: none; border-radius: 8px;
+    background-color: #007aff; color: white;
+    font-size: 0.9em; font-weight: 600; cursor: pointer;
+}
+#connectButton:disabled { background-color: #aaa; cursor: not-allowed; }
+
+#disconnectButton {
+    padding: 8px 12px; border: none; border-radius: 8px;
+    background-color: #ff3b30; color: white;
+    font-size: 0.9em; font-weight: 600; cursor: pointer;
+    display: none; /* 初期状態は非表示 (JSで制御) */
+}
+
+#status { font-weight: 600; padding: 8px 12px; border-radius: 16px; font-size: 0.9em; }
+#status.disconnected { color: #ff3b30; background-color: #ff3b3020; }
+#status.connecting { color: #ff9500; background-color: #ff950020; }
+#status.connected { color: #34c759; background-color: #34c75920; }
+
+.log-container {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    padding-bottom: 120px; /* フッターの高さ + 余白 */
+    background-color: #ffffff;
+}
+.log-wrapper { 
+    display: flex; 
+    flex-direction: column;
+}
+.message { 
+    margin-top: 12px; 
+    padding: 12px 16px; 
+    border-radius: 18px; 
+    max-width: 80%; 
+    line-height: 1.5; 
+    word-wrap: break-word;
+}
+.user { 
+    background-color: #dcedff; 
+    align-self: flex-end; 
+    border-bottom-right-radius: 4px;
+}
+.ai { 
+    background-color: #f1f3f4; 
+    align-self: flex-start; 
+    border-bottom-left-radius: 4px;
+}
+.info { 
+    text-align: center; 
+    color: #888; 
+    font-size: 0.9em; 
+    padding: 8px;
+}
+
+.footer {
+    padding: 20px 24px;
+    border-top: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+    z-index: 10;
+}
+.input-area { 
+    display: flex; 
+    width: 100%; 
+    gap: 12px;
+}
+#textInput { 
+    flex: 1; 
+    padding: 12px 16px; 
+    border: 1px solid #ccc; 
+    border-radius: 8px; 
+    font-size: 1em;
+    background: #fff;
+}
+
+/* ★★★ ボタンのスタイルを再確認 ★★★ */
+#sendButton { padding: 0 20px; border: none; border-radius: 8px; background-color: #007aff; color: white; font-size: 1em; font-weight: 600; cursor: pointer; }
+#micButton { padding: 12px; width: 50px; border: 1px solid #ccc; border-radius: 8px; font-size: 1.2em; cursor: pointer; background-color: #fff; }
+#micButton.recording { background-color: #ff3b30; color: white; border-color: #ff3b30; }
+/* ★★★ ここまで ★★★ */
+
+
+/* --- 未実装ページ用 --- */
+.placeholder-page {
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #888;
+    width: 100%;
+    height: 100%;
+}
+
+/* ★★★ 「考え中」インジケーター用のスタイル ★★★ */
+.thinking-indicator {
+  font-size: 1.2em;      /* ★ 文字を少し大きく */
+  font-weight: 600;      /* ★ 少し太字に */
+  color: #555;            /* ★ 文字色を少し濃く */
+  align-self: center;    /* 中央寄せ (info スタイルと同じ) */
+  background-color: #f0f0f0; /* 背景色 (info スタイルと同じ) */
+  padding: 8px 16px;
+  border-radius: 16px;
+  margin-top: 10px;
+  
+  /* (オプション) 点滅させるアニメーション */
+  animation: blink-animation 1.5s infinite ease-in-out;
+}
+
+/* 点滅アニメーションの定義 */
+@keyframes blink-animation {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+/* (もし .info スタイルが .thinking-indicator と競合するなら、
+   .message.info のスタイルを調整してください) */
+
+/* ★★★ CSSの確認 ★★★
+  .log-container が flex-direction: column; になっていることを確認してください。
+  (column-reverse だと「考え中」が一番上に出てしまいます)
+*/
+.log-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column; /* ★ column であることを確認！ */
+  padding: 16px 20px;
+  background-color: #f4f4f4;
+}
