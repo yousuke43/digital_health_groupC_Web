@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { VRM, VRMLoaderPlugin } from '@pixiv/three-vrm';
 
-const VRM_MODEL_PATH = '/Character1.vrm';
+const VRM_MODEL_PATH = '/AvatarSample_A.vrm';
 
 // ★ 音量解析の解像度
 const ANALYSER_FFT_SIZE = 2048; // 1024や2048が一般的
@@ -227,7 +227,7 @@ const VrmViewer = forwardRef(({ audioData }, ref) => { // ★ expressionName を
     }
     // RMS (二乗平均平方根) を計算して音量とする
     const volume = Math.sqrt(sumOfSquares / ANALYSER_FFT_SIZE);
-    // --- ★ ロジックここまで ★ ---
+    // --- ★ ロジックここまで ★---
     
     // RMS (0.0〜0.7程度) を 0.0〜1.0 の口の開きにマッピング
     // (係数 5.0 はお好みで調整)
@@ -276,10 +276,68 @@ const VrmViewer = forwardRef(({ audioData }, ref) => { // ★ expressionName を
   }, [expressionName]); 
   */
 
+  // ★★★ テスト音声を再生する機能を修正 (WAV対応) ★★★
+  const playTestAudio = () => {
+    const refs = threeObjects.current;
+    if (!initAudioContextForLipSync() || !refs.analyser) {
+      console.error("AudioContextまたはAnalyserが未初期化です。");
+      return;
+    }
+
+    const testAudioUrl = '/public/test-audio.wav'; // テスト音声ファイルのパス (WAV形式)
+
+    const play = async () => {
+      try {
+        const response = await fetch(testAudioUrl);
+        const audioData = await response.arrayBuffer();
+        const audioBuffer = await refs.audioContext.decodeAudioData(audioData);
+
+        if (refs.audioBufferSource) {
+          refs.audioBufferSource.stop();
+          refs.audioBufferSource.disconnect();
+        }
+        refs.audioBufferSource = refs.audioContext.createBufferSource();
+        refs.audioBufferSource.buffer = audioBuffer;
+
+        refs.audioBufferSource.connect(refs.analyser); // ソース -> アナライザー
+        refs.analyser.connect(refs.audioContext.destination); // アナライザー -> スピーカー
+
+        refs.audioBufferSource.onended = () => {
+          if (refs.vrm?.expressionManager) refs.vrm.expressionManager.setValue('ou', 0);
+          refs.audioBufferSource = null;
+        };
+
+        refs.audioBufferSource.start(0);
+      } catch (e) {
+        console.error("テスト音声の再生に失敗しました:", e);
+        if (refs.vrm?.expressionManager) refs.vrm.expressionManager.setValue('ou', 0);
+        refs.audioBufferSource = null;
+      }
+    };
+    play();
+  };
+
   // --- JSX (レンダリング) (変更なし) ---
+  // ★★★ 画面の大きさを元に戻す ★★★
   return (
-    <div id="vrm-canvas-container" ref={containerRef}>
-      <canvas id="vrm-canvas" ref={canvasRef}></canvas>
+    <div ref={containerRef} id="vrm-canvas-container">
+      <canvas ref={canvasRef} />
+      <button 
+        onClick={playTestAudio} 
+        style={{ 
+          position: 'absolute', 
+          bottom: '10px', 
+          left: '10px', 
+          padding: '10px 20px', 
+          backgroundColor: '#007BFF', 
+          color: '#FFF', 
+          border: 'none', 
+          borderRadius: '5px', 
+          cursor: 'pointer' 
+        }}
+      >
+        テスト音声を再生
+      </button>
     </div>
   );
 });
