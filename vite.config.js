@@ -4,6 +4,10 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    host: '0.0.0.0',  // ネットワーク上で公開
+    port: 5173,       // ポート番号（任意）
+  },
   
   // ★★★ このブロックが重要 ★★★
   optimizeDeps: {

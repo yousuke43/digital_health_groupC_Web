@@ -24,14 +24,14 @@ function ChatPage() {
   const [isRecording, setIsRecording] = useState(false);
   const [audioToPlay, setAudioToPlay] = useState(null);
   const [micError, setMicError] = useState(null);
-  
-  // ★★★ 1. 「考え中」状態を追加 ★★★
   const [isThinking, setIsThinking] = useState(false);
 
   const websocket = useRef(null);
   const logContainerRef = useRef(null);
   const vrmViewerRef = useRef(null);
-  
+  const thinkingTimeoutRef = useRef(null);  // タイムアウト用ref
+  const connectionTimeoutRef = useRef(null);  // 接続タイムアウト用ref
+
   // ログが追加されたら一番下にスクロール
   useEffect(() => {
     if (logContainerRef.current) {
@@ -47,33 +47,74 @@ function ChatPage() {
     ]);
   };
 
+  // タイムアウトをクリアする関数
+  const clearAllTimeouts = () => {
+    if (thinkingTimeoutRef.current) {
+      clearTimeout(thinkingTimeoutRef.current);
+      thinkingTimeoutRef.current = null;
+    }
+    if (connectionTimeoutRef.current) {
+      clearTimeout(connectionTimeoutRef.current);
+      connectionTimeoutRef.current = null;
+    }
+  };
+
+  // 「考え中」タイムアウトを設定
+  const startThinkingTimeout = () => {
+    clearAllTimeouts();
+    thinkingTimeoutRef.current = setTimeout(() => {
+      if (isThinking) {
+        setIsThinking(false);
+        addLog("応答がタイムアウトしました。もう一度お試しください。", "info");
+      }
+    }, 30000); // 30秒
+  };
+
   // --- WebSocket接続 ---
   const connect = () => {
     if (vrmViewerRef.current) vrmViewerRef.current.startAudioContext();
     if (websocket.current && websocket.current.readyState !== WebSocket.CLOSED) return;
+    
     setStatus({ key: 'connecting', text: '接続中...' });
+    
+    // 接続タイムアウトを設定（10秒）
+    connectionTimeoutRef.current = setTimeout(() => {
+      if (websocket.current && websocket.current.readyState === WebSocket.CONNECTING) {
+        websocket.current.close();
+        setStatus({ key: 'disconnected', text: '未接続' });
+        addLog("接続がタイムアウトしました。サーバーに接続できませんでした。", "info");
+      }
+    }, 10000);
+
     websocket.current = new WebSocket(SERVER_URL);
     websocket.current.binaryType = 'arraybuffer';
 
     websocket.current.onopen = () => {
+      clearAllTimeouts();
       setStatus({ key: 'connected', text: '接続済み' });
       addLog("サーバーに接続しました。", "info");
     };
+    
     websocket.current.onclose = () => {
+      clearAllTimeouts();
       setStatus({ key: 'disconnected', text: '未接続' });
       stopMicrophone();
       addLog("サーバーから切断されました。", "info");
       websocket.current = null;
-      setIsThinking(false); // ★ 切断時も「考え中」を解除
+      setIsThinking(false);
     };
+    
     websocket.current.onerror = (event) => {
+      clearAllTimeouts();
       console.error("WebSocketエラー:", event);
       setStatus({ key: 'disconnected', text: 'エラー' });
-      setIsThinking(false); // ★ エラー時も「考え中」を解除
+      addLog("接続エラーが発生しました。", "info");
+      setIsThinking(false);
     };
 
-    // ★★★ 2. onmessage ハンドラを修正 ★★★
     websocket.current.onmessage = (event) => {
+      clearAllTimeouts(); // メッセージ受信でタイムアウトクリア
+      
       if (typeof event.data === 'string') {
         try {
           const data = JSON.parse(event.data);
@@ -82,28 +123,27 @@ function ChatPage() {
             addLog(data.text, 'user');
           
           } else if (data.type === "ai_processing") {
-            // ★ 「考え中」フラグを立てる (ログには追加しない)
-            setIsThinking(true); 
+            setIsThinking(true);
+            startThinkingTimeout(); // タイムアウト開始
             
           } else if (data.type === "ai_response") {
-            // ★ AIの返事が来たら「考え中」を解除し、ログに追加
-            setIsThinking(false); 
+            setIsThinking(false);
             addLog(data.text, 'ai');
           }
           
         } catch (e) { 
-          setIsThinking(false); // エラー時も解除
+          setIsThinking(false);
           addLog(event.data, 'ai'); 
         }
       } else if (event.data instanceof ArrayBuffer) {
-        // ★ 音声データが来ても「考え中」を解除
-        setIsThinking(false); 
+        setIsThinking(false);
         setAudioToPlay(event.data);
       }
     };
-  }; // connect 関数の終わり
+  };
 
   const disconnect = () => {
+    clearAllTimeouts();
     if (websocket.current && websocket.current.readyState === WebSocket.OPEN) {
       websocket.current.close();
     }
@@ -137,6 +177,7 @@ function ChatPage() {
         websocket.current.send(text);
         // ★ ユーザー送信時にも「考え中」を開始
         setIsThinking(true); 
+        startThinkingTimeout(); // タイムアウト開始
       } else if (text) {
         addLog(`(送信失敗: ${text})`, 'info');
       }
@@ -183,11 +224,21 @@ function ChatPage() {
       websocket.current.send(textInput);
       addLog(textInput, 'user');
       setTextInput('');
-      // ★ テキスト送信時にも「考え中」を開始
-      setIsThinking(true); 
+      setIsThinking(true);
+      startThinkingTimeout(); // タイムアウト開始
     }
   };
 
+
+  // コンポーネントのクリーンアップ
+  useEffect(() => {
+    return () => {
+      clearAllTimeouts();
+      if (websocket.current) {
+        websocket.current.close();
+      }
+    };
+  }, []);
 
   // --- JSX (レンダリング) ---
   return (
@@ -225,7 +276,7 @@ function ChatPage() {
           </div>
         </div>
         
-        {/* ( ... フッター ... 変更なし) */}
+      
         <div className="footer">
           <div className="input-area">
             <button

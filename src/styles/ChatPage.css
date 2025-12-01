@@ -1,209 +1,443 @@
-/* --- ★ ChatPage 全体のレイアウト --- */
+/* --- ChatPage レイアウト --- */
 #chat-page {
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 100vh;
+    max-width: 1600px;
+    margin: 0 auto;
+    height: 100%;
+    gap: 24px;
+    padding: 24px 48px;
+    background-color: #f6f8fa;
     overflow: hidden;
-    box-sizing: border-box;
-    padding: 16px;
-    gap: 24px; /* コンポーネント間の間隔を広げる */
-    background-color: #f5f5f5;
-    justify-content: center; /* 中央寄せ */
-    align-items: center; /* 縦方向も中央寄せ */
 }
 
-/* --- ★ 左側：チャットエリア --- */
+/* --- チャットエリア --- */
 .chat-interface-area {
     display: flex;
     flex-direction: column;
-    width: 55%; /* VRMビューアーより少し広く */
-    min-width: 500px; /* 最小幅を拡大 */
-    height: 700px; /* 高さを少し拡大 */
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    box-sizing: border-box;
+    flex: 1;
+    min-width: 350px;
+    height: 100%;
+    max-height: 100%;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
     overflow: hidden;
     position: relative;
 }
 
-/* --- ★ 右側：VRM表示エリア --- */
+/* --- VRM表示エリア --- */
+.vrm-area,
 #vrm-canvas-container {
-    width: 45%; /* チャット画面より少し狭く */
-    min-width: 400px; /* 最小幅を拡大 */
-    height: 700px; /* 高さを少し拡大 */
-    background-color: #f0f2f5;
-
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 500px;
+    min-width: 400px;
+    flex-shrink: 0;
+    height: 100%;
+    background-color: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 #vrm-canvas {
-    width: 10;
+    width: 100%;
     height: 100%;
     display: block;
-    object-fit: cover; /* 領域いっぱいに表示 */
-    transform: scale(1.2); /* キャラクターを少し大きく表示 */
+    object-fit: contain;
 }
 
-/* --- チャットエリア内の要素スタイル --- */
+/* --- ヘッダー --- */
 .header {
-    padding: 20px 24px;
-    border-bottom: 1px solid #eaeaea;
+    padding: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
-    background-color: #ffffff;
+    gap: 12px;
+    background-color: #f6f8fa;
+    border-bottom: 1px solid #d0d7de;
+    flex-wrap: wrap;
 }
-.header h1 { margin: 0; font-size: 1.4em; color: #111; flex: 1; }
 
-/* ★★★ ボタンのスタイルを再確認 ★★★ */
-#connectButton {
-    padding: 8px 12px; border: none; border-radius: 8px;
-    background-color: #007aff; color: white;
-    font-size: 0.9em; font-weight: 600; cursor: pointer;
+.header h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2328;
 }
-#connectButton:disabled { background-color: #aaa; cursor: not-allowed; }
+
+/* --- ステータスとボタン --- */
+#status {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 2em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+#status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+#status.disconnected {
+    color: #cf222e;
+    background-color: #ffebe9;
+    border: 1px solid rgba(207, 34, 46, 0.2);
+}
+#status.disconnected::before { background-color: #cf222e; }
+
+#status.connecting {
+    color: #9a6700;
+    background-color: #fff8c5;
+    border: 1px solid rgba(154, 103, 0, 0.2);
+}
+#status.connecting::before {
+    background-color: #9a6700;
+    animation: pulse 1s infinite;
+}
+
+#status.connected {
+    color: #1a7f37;
+    background-color: #dafbe1;
+    border: 1px solid rgba(26, 127, 55, 0.2);
+}
+#status.connected::before { background-color: #1a7f37; }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+#connectButton,
+#disconnectButton {
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    border: 1px solid;
+    white-space: nowrap;
+}
+
+#connectButton {
+    background-color: #2da44e;
+    border-color: rgba(31, 35, 40, 0.15);
+    color: #ffffff;
+}
+
+#connectButton:hover {
+    background-color: #2c974b;
+}
+
+#connectButton:disabled {
+    background-color: #94d3a2;
+    border-color: rgba(31, 35, 40, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+    cursor: not-allowed;
+}
 
 #disconnectButton {
-    padding: 8px 12px; border: none; border-radius: 8px;
-    background-color: #ff3b30; color: white;
-    font-size: 0.9em; font-weight: 600; cursor: pointer;
-    display: none; /* 初期状態は非表示 (JSで制御) */
+    background-color: #f6f8fa;
+    border-color: #d0d7de;
+    color: #cf222e;
 }
 
-#status { font-weight: 600; padding: 8px 12px; border-radius: 16px; font-size: 0.9em; }
-#status.disconnected { color: #ff3b30; background-color: #ff3b3020; }
-#status.connecting { color: #ff9500; background-color: #ff950020; }
-#status.connected { color: #34c759; background-color: #34c75920; }
+#disconnectButton:hover {
+    background-color: #ffebe9;
+    border-color: #cf222e;
+}
 
+/* --- ログコンテナ --- */
 .log-container {
     flex: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    padding: 24px;
-    padding-bottom: 120px; /* フッターの高さ + 余白 */
+    padding: 16px;
     background-color: #ffffff;
-}
-.log-wrapper { 
-    display: flex; 
-    flex-direction: column;
-}
-.message { 
-    margin-top: 12px; 
-    padding: 12px 16px; 
-    border-radius: 18px; 
-    max-width: 80%; 
-    line-height: 1.5; 
-    word-wrap: break-word;
-}
-.user { 
-    background-color: #dcedff; 
-    align-self: flex-end; 
-    border-bottom-right-radius: 4px;
-}
-.ai { 
-    background-color: #f1f3f4; 
-    align-self: flex-start; 
-    border-bottom-left-radius: 4px;
-}
-.info { 
-    text-align: center; 
-    color: #888; 
-    font-size: 0.9em; 
-    padding: 8px;
+    min-height: 0;
 }
 
-.footer {
-    padding: 20px 24px;
-    border-top: 1px solid #eaeaea;
+.log-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.log-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.log-container::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+.log-wrapper {
     display: flex;
     flex-direction: column;
+    gap: 12px;
+    padding-bottom: 100px;
+}
+
+/* --- メッセージ --- */
+.message {
+    padding: 12px 16px;
+    border-radius: 6px;
+    max-width: 85%;
+    line-height: 1.5;
+    font-size: 14px;
+    word-wrap: break-word;
+    border: 1px solid;
+}
+
+.user {
+    background-color: #ddf4ff;
+    border-color: #54aeff66;
+    color: #0969da;
+    align-self: flex-end;
+}
+
+.ai {
+    background-color: #f6f8fa;
+    border-color: #d0d7de;
+    color: #1f2328;
+    align-self: flex-start;
+}
+
+.info {
+    background-color: transparent;
+    border: none;
+    color: #57606a;
+    font-size: 12px;
+    text-align: center;
+    align-self: center;
+    padding: 8px;
+    max-width: 100%;
+}
+
+/* --- 「考え中」インジケーター --- */
+.thinking-indicator {
+    display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
+    font-size: 14px;
+    color: #57606a;
+    background-color: #f6f8fa;
+    border: 1px solid #d0d7de;
+    padding: 12px 16px;
+    border-radius: 6px;
+    align-self: flex-start;
+}
+
+.thinking-indicator::after {
+    content: '...';
+    animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+}
+
+/* --- フッター入力エリア --- */
+.footer {
+    padding: 12px 16px;
+    background-color: #f6f8fa;
+    border-top: 1px solid #d0d7de;
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.input-area {
+    display: flex;
+    gap: 8px;
     background: #ffffff;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
-    z-index: 10;
-}
-.input-area { 
-    display: flex; 
-    width: 100%; 
-    gap: 12px;
-}
-#textInput { 
-    flex: 1; 
-    padding: 12px 16px; 
-    border: 1px solid #ccc; 
-    border-radius: 8px; 
-    font-size: 1em;
-    background: #fff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    padding: 8px;
+    flex-wrap: wrap;
 }
 
-/* ★★★ ボタンのスタイルを再確認 ★★★ */
-#sendButton { padding: 0 20px; border: none; border-radius: 8px; background-color: #007aff; color: white; font-size: 1em; font-weight: 600; cursor: pointer; }
-#micButton { padding: 12px; width: 50px; border: 1px solid #ccc; border-radius: 8px; font-size: 1.2em; cursor: pointer; background-color: #fff; }
-#micButton.recording { background-color: #ff3b30; color: white; border-color: #ff3b30; }
-/* ★★★ ここまで ★★★ */
+.input-area:focus-within {
+    border-color: #0969da;
+    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1);
+}
 
+#textInput {
+    flex: 1;
+    min-width: 150px;
+    padding: 8px 12px;
+    border: none;
+    font-size: 14px;
+    background: transparent;
+    color: #1f2328;
+    outline: none;
+}
+
+#textInput::placeholder {
+    color: #6e7781;
+}
+
+#sendButton {
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid rgba(31, 35, 40, 0.15);
+    border-radius: 6px;
+    background-color: #2da44e;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    white-space: nowrap;
+}
+
+#sendButton:hover {
+    background-color: #2c974b;
+}
+
+#sendButton:disabled {
+    background-color: #94d3a2;
+    cursor: not-allowed;
+}
+
+#micButton {
+    padding: 8px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #f6f8fa;
+    color: #57606a;
+    transition: all 0.15s ease;
+}
+
+#micButton:hover {
+    background-color: #eaeef2;
+}
+
+#micButton.recording {
+    background-color: #ffebe9;
+    border-color: #cf222e;
+    color: #cf222e;
+}
 
 /* --- 未実装ページ用 --- */
 .placeholder-page {
-    padding: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    color: #888;
     width: 100%;
-    height: 100%;
+    min-height: 400px;
+    background: #ffffff;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    color: #57606a;
+    padding: 24px;
+    text-align: center;
 }
 
-/* ★★★ 「考え中」インジケーター用のスタイル ★★★ */
-.thinking-indicator {
-  font-size: 1.2em;      /* ★ 文字を少し大きく */
-  font-weight: 600;      /* ★ 少し太字に */
-  color: #555;            /* ★ 文字色を少し濃く */
-  align-self: center;    /* 中央寄せ (info スタイルと同じ) */
-  background-color: #f0f0f0; /* 背景色 (info スタイルと同じ) */
-  padding: 8px 16px;
-  border-radius: 16px;
-  margin-top: 10px;
-  
-  /* (オプション) 点滅させるアニメーション */
-  animation: blink-animation 1.5s infinite ease-in-out;
+/* --- レスポンシブ: タブレット --- */
+@media (max-width: 1024px) {
+    #chat-page {
+        padding: 16px 32px;
+        gap: 16px;
+    }
+
+    .vrm-area,
+    #vrm-canvas-container {
+        width: 400px;
+        min-width: 320px;
+        min-height: 400px;
+    }
 }
 
-/* 点滅アニメーションの定義 */
-@keyframes blink-animation {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
+/* --- レスポンシブ: スマートフォン横向き / 小タブレット --- */
+@media (max-width: 860px) {
+    #chat-page {
+        flex-direction: column;
+        height: auto;
+        overflow: auto;
+        padding: 16px;
+    }
+
+    .chat-interface-area {
+        min-height: 400px;
+        height: auto;
+        max-height: none;
+    }
+
+    .vrm-area,
+    #vrm-canvas-container {
+        width: 100%;
+        min-width: unset;
+        height: 350px;
+        order: -1;
+    }
+
+    .log-container {
+        min-height: 300px;
+    }
+
+    .footer {
+        position: relative;
+    }
+
+    .log-wrapper {
+        padding-bottom: 16px;
+    }
 }
 
-/* (もし .info スタイルが .thinking-indicator と競合するなら、
-   .message.info のスタイルを調整してください) */
+/* --- レスポンシブ: スマートフォン --- */
+@media (max-width: 640px) {
+    #chat-page {
+        padding: 12px;
+        gap: 12px;
+        min-height: calc(100vh - 90px - 24px);
+    }
 
-/* ★★★ CSSの確認 ★★★
-  .log-container が flex-direction: column; になっていることを確認してください。
-  (column-reverse だと「考え中」が一番上に出てしまいます)
-*/
-.log-container {
-  flex-grow: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column; /* ★ column であることを確認！ */
-  padding: 16px 20px;
-  background-color: #f4f4f4;
+    .header {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .header h1 {
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .message {
+        max-width: 90%;
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .input-area {
+        padding: 6px;
+    }
+
+    #textInput {
+        min-width: 100px;
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+
+    #sendButton {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
 }

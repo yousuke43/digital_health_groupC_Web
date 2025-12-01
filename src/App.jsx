@@ -30,17 +30,20 @@ function App() {
 
   return (
     <>
-      <nav>
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            id={`nav-${item.id}`}
-            className={currentPage === item.id ? 'active' : ''}
-            onClick={() => setCurrentPage(item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
+      <nav className="navbar">
+        <h2 className='title'>DLCS</h2>
+        <div className="nav-buttons">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              id={`nav-${item.id}`}
+              className={currentPage === item.id ? 'active' : ''}
+              onClick={() => setCurrentPage(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
       </nav>
 
       <main id="content-area">

@@ -1,55 +1,154 @@
-/* --- ★ ナビゲーションバー (変更なし) --- */
-nav {
+/* --- GitHub風グローバルスタイル --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    background-color: #f6f8fa;
+    color: #1f2328;
+    line-height: 1.5;
+}
+
+#root {
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 12px;
-    background: #ffffff;
-    border-bottom: 1px solid #e0e0e0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    flex-direction: column;
+}
+
+/* --- ナビゲーションバー --- */
+nav, .navbar {
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    height: 62px;
+    min-height: 62px;
+    background-color: #24292f;
+    border-bottom: 1px solid #57606a;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     flex-shrink: 0;
 }
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-right: 32px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
 nav button {
     padding: 8px 16px;
-    font-size: 1em;
+    font-size: 14px;
     font-weight: 500;
-    border: 1px solid transparent;
-    border-radius: 8px;
-    background-color: #f0f2f5;
-    color: #555;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
 }
+
 nav button:hover {
-    background-color: #e0e0e0;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
+
 nav button.active {
-    background-color: #007aff;
-    color: white;
-    border-color: #007aff;
+    background-color: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-weight: 600;
 }
 
-/* --- ★ ページコンテンツエリア (変更) --- */
+/* --- メインコンテンツエリア --- */
 main#content-area {
-    flex: 1; /* ★ 残りの高さをすべて使う */
-    display: flex; /* ★ 子要素(ページ)を表示 */
-    /* justify-content: center; */ /* ← 中央揃え削除 */
-    /* align-items: center; */     /* ← 中央揃え削除 */
-    /* padding: 16px; */    /* ← パディング削除 */
-    box-sizing: border-box;
-    min-height: 0; /* flexの子要素の縮小対策 */
-    /* overflow-y: auto; */ /* ← ページ側でスクロールするので削除 */
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    background-color: #f6f8fa;
+    overflow: auto;
 }
 
-/* --- ★ 各ページコンテナ (変更) --- */
+/* --- ページコンテナ共通 --- */
 .page {
-    display: flex; /* ★ App.jsx側で表示/非表示を制御 */
-    width: 100%;   /* ★ 全幅 */
-    height: 100%;  /* ★ 全高 */
-    /* max-width: 600px; */ /* ← 最大幅制限削除 */
-    /* background: #fff; */ /* ← 背景削除 */
-    /* border-radius: 12px; */ /* ← 角丸削除 */
-    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); */ /* ← 影削除 */
-    overflow: hidden; /* ★ ページ内のコンテンツがはみ出さないように */
-    flex-direction: column; /* ★ 縦積み (ChatPage以外で必要なら) */
+    display: flex;
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+    gap: 24px;
+}
+
+/* --- レスポンシブ: タブレット --- */
+@media (max-width: 1024px) {
+    nav, .navbar {
+        padding: 0 16px;
+    }
+
+    .title {
+        font-size: 1.1rem;
+        margin-right: 16px;
+    }
+
+    nav button {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .page {
+        padding: 16px;
+        gap: 16px;
+    }
+}
+
+/* --- レスポンシブ: スマートフォン --- */
+@media (max-width: 640px) {
+    nav, .navbar {
+        padding: 8px 12px;
+        height: auto;
+        min-height: 56px;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .title {
+        font-size: 1rem;
+        margin-right: auto;
+    }
+
+    .nav-buttons {
+        width: 100%;
+        justify-content: center;
+        gap: 4px;
+    }
+
+    nav button {
+        padding: 6px 10px;
+        font-size: 12px;
+        flex: 1;
+        text-align: center;
+    }
+
+    .page {
+        padding: 12px;
+        gap: 12px;
+        flex-direction: column;
+    }
 }
