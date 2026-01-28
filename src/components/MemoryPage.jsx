@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { memoryDummyData, cleanTitle, extractTags } from '../data/memoryDummyData';
 import '../styles/MemoryPage.css';
 
-const IP = import.meta.env.VITE_SERVER_IP;
-const MEMORY_API_URL = `http://${IP}/api/memory`;
+const IP = import.meta.env.VITE_SERVER_IP || 'localhost:8000';
+const MEMORY_API_URL = `http://${IP}/get_memories`;  // ← 修正
 
 function MemoryPage() {
   const [memories, setMemories] = useState([]);
@@ -66,11 +66,13 @@ function MemoryPage() {
     return `${date.getFullYear()}年${date.getMonth() + 1}月`;
   };
 
-  // APIからデータ取得
+  // データ取得
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-
+      
+      console.log('Fetching memory data from:', MEMORY_API_URL);
+      
       try {
         const response = await fetch(MEMORY_API_URL, {
           method: 'GET',
@@ -78,50 +80,46 @@ function MemoryPage() {
             'Content-Type': 'application/json',
           },
         });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
         const apiData = await response.json();
-
+        console.log('API data received:', apiData);
+        
         if (apiData && Array.isArray(apiData) && apiData.length > 0) {
-          const sortedData = apiData.sort((a, b) =>
-            new Date(b.日付) - new Date(a.日付)
-          );
-
-          const formattedData = sortedData.map((item, index) => ({
-            id: index + 1,
-            date: item.日付,
-            title: cleanTitle(item.タイトル),
-            content: item.内容,
-            tags: extractTags(item.内容),
-          }));
-
-          setMemories(formattedData);
+          const formatted = apiData
+            .sort((a, b) => new Date(b.日付) - new Date(a.日付))
+            .map((item, i) => ({
+              id: i + 1,
+              date: item.日付,
+              title: cleanTitle(item.タイトル || item.トピック),  // ← サーバーが "トピック" を返す可能性
+              content: item.内容,
+              tags: extractTags(item.内容),
+            }));
+          setMemories(formatted);
           setDataSource('api');
+          console.log('Memory data loaded from API successfully');
         } else {
           throw new Error('Invalid API response');
         }
-
       } catch (error) {
-        console.warn('API fetch failed, using dummy data:', error.message);
-
-        const formattedDummy = memoryDummyData.map((item, index) => ({
-          id: index + 1,
+        console.warn('API fetch failed:', error.message);
+        console.log('Using dummy data instead');
+        
+        const formatted = memoryDummyData.map((item, i) => ({
+          id: i + 1,
           date: item.日付,
           title: cleanTitle(item.タイトル),
           content: item.内容,
           tags: extractTags(item.内容),
         }));
-
-        setMemories(formattedDummy);
+        setMemories(formatted);
         setDataSource('dummy');
       }
-
       setIsLoading(false);
     };
-
     fetchData();
   }, []);
 

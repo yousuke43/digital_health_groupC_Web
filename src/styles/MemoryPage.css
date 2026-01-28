@@ -112,7 +112,8 @@
 
 /* --- 思い出ページ --- */
 #memory-page {
-    display: block;
+    display: flex;
+    justify-content: center;
     width: 100%;
     padding: 24px;
     background-color: #f6f8fa;
@@ -123,6 +124,7 @@
 .memory-container {
     width: 100%;
     max-width: 800px;
+    margin: 0 auto;
 }
 
 /* --- ローディング・ヘッダー --- */
@@ -170,7 +172,7 @@
 .search-box { display: flex; align-items: center; width: 100%; padding: 10px 14px; background: #ffffff; border: 1px solid #d0d7de; border-radius: 6px; }
 .search-box:focus-within { border-color: #0969da; box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.1); }
 .search-icon { margin-right: 10px; font-size: 14px; }
-.search-box input { flex: 1; border: none; outline: none; font-size: 14px; background: transparent; color: #1f2328; }
+.search-box input { flex: 1; border: none; outline: none; font-size: 15px; background: transparent; color: #1f2328; }
 .search-box input::placeholder { color: #6e7781; }
 .clear-btn { background: none; border: none; color: #57606a; cursor: pointer; padding: 4px 8px; font-size: 14px; }
 .clear-btn:hover { color: #1f2328; }
@@ -320,7 +322,7 @@
 
 .memory-title {
     flex: 1;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 500;
     color: #1f2328;
 }
